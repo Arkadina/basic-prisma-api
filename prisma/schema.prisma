@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Na url deve ser declarado o nome do banco de dados 
+// mongodb+srv://<username>:<password>@<cluster>/<database>?retryWrites=true&w=majority
+
+model User {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  // title => required;
+  content   String?
+  published Boolean  @default(false)
+  viewCount Int      @default(0)
+  author    User?    @relation(fields: [authorId], references: [id])
+  // references: [id] => referencia o id do User
+  authorId  String?  @db.ObjectId
+}
+  // author     User?    @relation(fields: [authorId], references: [id])
+  // authorId   String?  @db.ObjectId
+  // coAuthor    User?    @relation(fields: [coAuthorId], references: [id])
+  // coAuthorId  String?  @db.ObjectId
